@@ -13,6 +13,7 @@ const Home = () => {
         finished: [],
         movie: [],
         summer: [],
+        slider: []
     });
     const [loading, setLoading] = useState(true);
 
@@ -36,10 +37,28 @@ const Home = () => {
     return (
         <div className="min-h-screen bg-black text-white">
             <Navbar />
-            <Hero animeList={animeData.ongoing.slice(0, 5)} />
+            <Hero animeList={animeData.slider.slice(0, 5)} />
 
             <div className="pt-20 container mx-auto px-4 md:px-6 lg:px-8">
-                {/* Ongoing Section */}
+
+                {/* Summer */}
+                <div className="mb-12 lg:mb-16">
+                    <SectionTitle title="Summer Anime" subtitle="Summer Anime" type="summer" />
+                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        {loading
+                            ? skeletons.map((_, i) => <LoadingCard key={i} />)
+                            : animeData.summer.map((anime, index) => (
+                                <AnimeCard key={anime.id} anime={anime} index={index} />
+                            ))}
+                    </div>
+                    <div className="sm:hidden mt-4">
+                        <button className="w-full bg-[#0065F8] hover:bg-[#4300FF] text-white py-3 rounded font-semibold transition-colors">
+                            View All
+                        </button>
+                    </div>
+                </div>
+
+                {/* Ongoing */}
                 <div className="mb-12 lg:mb-16">
                     <SectionTitle title="Ongoing Anime" subtitle="Ongoing Anime" type="ongoing" />
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -56,7 +75,7 @@ const Home = () => {
                     </div>
                 </div>
 
-                {/* Finished Section */}
+                {/* Finished */}
                 <div className="mb-12 lg:mb-16">
                     <SectionTitle title="Finished Anime" subtitle="Finished Anime" type="finished" />
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -73,30 +92,13 @@ const Home = () => {
                     </div>
                 </div>
 
-                {/* Movie Section */}
+                {/* Movie */}
                 <div className="mb-12 lg:mb-16">
                     <SectionTitle title="Anime Movies" subtitle="Anime Movies" type="movie" />
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                         {loading
                             ? skeletons.map((_, i) => <LoadingCard key={i} />)
                             : animeData.movie.map((anime, index) => (
-                                <AnimeCard key={anime.id} anime={anime} index={index} />
-                            ))}
-                    </div>
-                    <div className="sm:hidden mt-4">
-                        <button className="w-full bg-[#0065F8] hover:bg-[#4300FF] text-white py-3 rounded font-semibold transition-colors">
-                            View All
-                        </button>
-                    </div>
-                </div>
-
-                {/* Summer Section */}
-                <div className="mb-12 lg:mb-16">
-                    <SectionTitle title="Summer Anime" subtitle="Summer Anime" type="summer" />
-                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                        {loading
-                            ? skeletons.map((_, i) => <LoadingCard key={i} />)
-                            : animeData.summer.map((anime, index) => (
                                 <AnimeCard key={anime.id} anime={anime} index={index} />
                             ))}
                     </div>

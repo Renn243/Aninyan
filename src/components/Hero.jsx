@@ -47,26 +47,24 @@ const Hero = ({ animeList }) => {
                             </span>
                         </div>
 
-                        <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold text-white mb-4 leading-tight line-clamp-3">
+                        <h1 className="text-3xl md:text-4xl lg:text-6xl font-bold text-white mb-4 leading-tight line-clamp-2">
                             {currentAnime.title}
                         </h1>
 
-                        <div className="flex items-center space-x-4 mb-4 text-white/80">
-                            <div className="flex items-center space-x-1">
-                                <Star className="w-4 h-4 text-yellow-400 fill-current" />
-                                <span className="text-sm font-medium">
-                                    {currentAnime.score && currentAnime.score.trim() !== ""
-                                        ? currentAnime.score
-                                        : currentAnime.ratings}
+                        <div className="flex flex-wrap gap-2 mb-4">
+                            {currentAnime.genres.map((genre, index) => (
+                                <span
+                                    key={index}
+                                    className="bg-white/20 text-white px-2 py-1 rounded text-xs font-medium"
+                                >
+                                    {genre}
                                 </span>
-                            </div>
-                            {currentAnime.episode && (
-                                <span className="text-sm">{currentAnime.episode}</span>
-                            )}
-                            {currentAnime.type && (
-                                <span className="text-sm">{currentAnime.type}</span>
-                            )}
+                            ))}
                         </div>
+
+                        <p className="text-white/90 text-sm md:text-base lg:text-lg mb-8 leading-relaxed line-clamp-3">
+                            {currentAnime.description || "No description available."}
+                        </p>
 
                         <div className="flex flex-col sm:flex-row gap-4">
                             <Link

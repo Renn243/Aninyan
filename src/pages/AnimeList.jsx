@@ -4,12 +4,12 @@ import GetAnimeList from '../apis/GetAnimeList';
 import Navbar from '../components/navbar';
 import { useSearchParams, Link } from "react-router-dom";
 import Footer from '../components/Footer';
+import AnimeCard from '../components/AnimeCard';
 
 const AnimeListPage = () => {
     const [animeList, setAnimeList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
-    const [viewMode, setViewMode] = useState('grid');
     const [currentLetter, setCurrentLetter] = useState('');
     const [showScrollTop, setShowScrollTop] = useState(false);
 
@@ -19,16 +19,20 @@ const AnimeListPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const initialPage = parseInt(searchParams.get("page")) || 1;
     const [page, setPage] = useState(initialPage);
+    const [orderBy, setOrderBy] = useState('ascending');
 
     useEffect(() => {
-        setSearchParams({ page });
-    }, [page, setSearchParams]);
+        const params = { page: page.toString(), order_by: orderBy };
+        setSearchParams(params);
+    }, [page, orderBy, setSearchParams]);
 
     useEffect(() => {
         window.scrollTo({ top: 0, behavior: "smooth" });
+
         const fetchData = async () => {
+            setLoading(true);
             try {
-                const data = await GetAnimeList(page);
+                const data = await GetAnimeList(page, orderBy);
                 setAnimeList(data);
             } catch (error) {
                 console.error("Failed to fetch anime list:", error);
@@ -37,7 +41,7 @@ const AnimeListPage = () => {
             }
         };
         fetchData();
-    }, [page]);
+    }, [page, orderBy]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -91,7 +95,7 @@ const AnimeListPage = () => {
                             {[1, 2, 3].map(section => (
                                 <div key={section} className="space-y-4">
                                     <div className="bg-gray-800 h-8 w-32 rounded animate-pulse"></div>
-                                    <div className={`grid gap-3 ${viewMode === 'grid'
+                                    <div className={`grid gap-3 ${orderBy === 'ascending'
                                         ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
                                         : 'grid-cols-1'
                                         }`}>
@@ -119,7 +123,7 @@ const AnimeListPage = () => {
                                         </div>
                                     </div>
 
-                                    <div className={`grid gap-3 ${viewMode === 'grid'
+                                    <div className={`grid gap-3 ${orderBy === 'ascending'
                                         ? 'grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
                                         : 'grid-cols-1'
                                         }`}>
@@ -130,21 +134,9 @@ const AnimeListPage = () => {
                                                 className="group cursor-pointer transition-all duration-300 hover:scale-[1.02]"
                                                 style={{ animationDelay: `${index * 30}ms` }}
                                             >
-                                                {viewMode === 'grid' ? (
+                                                {orderBy === 'ascending' ? (
                                                     // Grid View
-                                                    <div className="bg-gray-900 rounded-lg p-4 hover:bg-gray-800 transition-all shadow-lg hover:shadow-2xl border border-gray-800 hover:border-[#0065F8]">
-                                                        <div className="flex items-center justify-between">
-                                                            <h3 className="text-white font-medium text-sm group-hover:text-[#0065F8] transition-colors line-clamp-2 pr-2">
-                                                                {anime.title}
-                                                            </h3>
-                                                            <Link to={`/anime/${anime.animeCode}/${anime.animeId}`}>
-                                                                <button className="opacity-0 group-hover:opacity-100 bg-[#0065F8] hover:bg-[#4300FF] text-white p-2 rounded-full transition-all flex-shrink-0">
-                                                                    <Play className="w-4 h-4" />
-                                                                </button>
-                                                            </Link>
-                                                        </div>
-                                                        <div className="w-0 group-hover:w-full h-0.5 bg-[#0065F8] transition-all duration-300 mt-3"></div>
-                                                    </div>
+                                                    <AnimeCard key={anime.id} anime={anime} index={index} />
                                                 ) : (
                                                     // List View
                                                     <div className="bg-gray-900 rounded-lg p-4 hover:bg-gray-800 transition-all shadow-lg hover:shadow-2xl border border-gray-800 hover:border-[#0065F8]">
@@ -216,14 +208,19 @@ const AnimeListPage = () => {
             <div className='fixed bottom-4 left-4 z-50'>
                 <div className="flex bg-gray-800 rounded-lg p-1">
                     <button
-                        onClick={() => setViewMode('grid')}
-                        className={`p-2 rounded ${viewMode === 'grid' ? 'bg-[#0065F8] text-white' : 'text-gray-400 hover:text-white'} transition-colors`}
+                        onClick={() => {
+                            setOrderBy('ascending');
+                        }}
+                        className={`p-2 rounded ${orderBy === 'ascending' ? 'bg-[#0065F8] text-white' : 'text-gray-400 hover:text-white'} transition-colors`}
                     >
                         <Grid3X3 className="w-4 h-4" />
                     </button>
+
                     <button
-                        onClick={() => setViewMode('list')}
-                        className={`p-2 rounded ${viewMode === 'list' ? 'bg-[#0065F8] text-white' : 'text-gray-400 hover:text-white'} transition-colors`}
+                        onClick={() => {
+                            setOrderBy('text');
+                        }}
+                        className={`p-2 rounded ${orderBy === 'text' ? 'bg-[#0065F8] text-white' : 'text-gray-400 hover:text-white'} transition-colors`}
                     >
                         <List className="w-4 h-4" />
                     </button>
